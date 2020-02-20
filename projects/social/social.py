@@ -1,3 +1,40 @@
+import random
+
+
+class Queue():
+    def __init__(self):
+        self.queue = []
+
+    def enqueue(self, value):
+        self.queue.append(value)
+
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+
+    def size(self):
+        return len(self.queue)
+
+
+class Stack():
+    def __init__(self):
+        self.stack = []
+
+    def push(self, value):
+        self.stack.append(value)
+
+    def pop(self):
+        if self.size() > 0:
+            return self.stack.pop()
+        else:
+            return None
+
+    def size(self):
+        return len(self.stack)
+
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -45,8 +82,21 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(0, num_users):
+            self.add_user(f"User {i}") # NOTE: debug function
+
+        possible_friendships = []
 
         # Create friendships
+        for UserID in self.users:
+            for friendID in range(UserID + self.last_id):
+                possible_friendships.append((UserID, friendID))
+
+        random.shuffle()
+
+        for i in range(num_users * avg_friendships // 2):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
@@ -58,7 +108,23 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        qq = Queue()
+
+        qq.enqueue([user_id])
+
+        while qq.size() > 0:
+            path = qq.dequeue()
+            v = path[-1]
+
+            if v not in visited:
+                visited[v] = path
+
+                for neighbor in self.friendships[v]:
+                    path_copy = path.copy()
+                    path_copy.append(neighbor)
+                    qq.enqueue(path_copy)
+
         return visited
 
 
